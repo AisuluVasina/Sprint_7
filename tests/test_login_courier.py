@@ -1,6 +1,7 @@
 import allure
 import pytest
 from api_client import ApiClient
+from test_data import MSG_ACCOUNT_NOT_FOUND, MSG_MISSING_DATA_LOGIN
 
 class TestLoginCourier:
 
@@ -22,7 +23,7 @@ class TestLoginCourier:
 
         response = ApiClient.login_courier(login, wrong_password)
         assert response.status_code == 404
-        assert response.json()["message"] == "Учетная запись не найдена"
+        assert response.json()["message"] == MSG_ACCOUNT_NOT_FOUND
 
     @allure.title("Ошибка при отсутствии обязательных полей")
     @allure.description("Проверка, что при отсутствии одного из обязательных полей возвращается ошибка: код 400 и сообщение")
@@ -34,4 +35,4 @@ class TestLoginCourier:
     def test_login_courier_missing_field(self, payload):
         response = ApiClient.login_courier(payload.get("login", ""), payload.get("password", ""))
         assert response.status_code == 400
-        assert response.json()["message"] == "Недостаточно данных для входа"
+        assert response.json()["message"] == MSG_MISSING_DATA_LOGIN

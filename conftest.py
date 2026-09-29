@@ -2,17 +2,12 @@ import pytest
 import random
 import string
 from api_client import ApiClient
-
-def generate_random_string(length):
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for _ in range(length))
+from test_data import generate_random_string, generate_unique_courier_data
 
 @pytest.fixture
 def unique_courier():
-    #Создает курьера перед тестом, удаляет после.
-    login = generate_random_string(10)
-    password = generate_random_string(10)
-    first_name = generate_random_string(10)
+    data = generate_unique_courier_data()
+    login, password, first_name = data["login"], data["password"], data["first_name"]
     
     # Создаем
     response = ApiClient.create_courier(login, password, first_name)
@@ -21,8 +16,6 @@ def unique_courier():
     courier_data = {"login": login, "password": password, "first_name": first_name}
     yield courier_data
     
-    # Удаляем (если нужно, иногда тесты сами проверяют удаление, но для чистоты можно удалить)
-    # Примечание: если тест проверяет удаление, эту строку нужно убрать или сделать условной
     login_resp = ApiClient.login_courier(login, password)
     if login_resp.status_code == 200:
         courier_id = login_resp.json().get("id")
@@ -45,4 +38,3 @@ def created_order():
     assert response.status_code == 201
     track = response.json().get("track")
     yield track
-    # Очистка заказа не предусмотрена API явно, оставляем как есть или игнорируем в рамках спринта

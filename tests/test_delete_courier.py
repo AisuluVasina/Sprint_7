@@ -1,6 +1,7 @@
 import allure
 import pytest
 from api_client import ApiClient
+from test_data import MSG_COURIER_DELETE, MSG_COURIER_NOT_FOUND
 
 class TestDeleteCourier:
 
@@ -25,11 +26,11 @@ class TestDeleteCourier:
     def test_delete_courier_without_id(self):
         response = ApiClient.delete_courier("")
         assert response.status_code == 400
-        assert response.json()["message"] == "Недостаточно данных для удаления курьера"
+        assert response.json()["message"] == MSG_COURIER_DELETE
 
     @allure.title("Ошибка при удалении несуществующего курьера")
     @allure.description("Проверка, что при удалении несуществующего курьера возвращается ошибка: код 400 и сообщение")
     def test_delete_courier_nonexistent(self):
         response = ApiClient.delete_courier("999999999")
         assert response.status_code == 404
-        assert response.json()["message"] == "Курьера с таким id нет"
+        assert response.json()["message"] == MSG_COURIER_NOT_FOUND

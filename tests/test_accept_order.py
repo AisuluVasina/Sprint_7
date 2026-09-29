@@ -1,6 +1,7 @@
 import allure
 import pytest
 from api_client import ApiClient
+from test_data import MSG_MISSING_DATA_ACCEPT
 
 class TestAcceptOrder:
 
@@ -29,13 +30,6 @@ class TestAcceptOrder:
         (None, None)
     ])
     def test_accept_order_missing_params(self, courier_id, order_id):
-        if courier_id is None or order_id is None:
-            # Если один из параметров None, API может вернуть 400 или 500 в зависимости от реализации
-            # В данном случае ожидаем 400, но если API возвращает 500, нужно уточнить требования
-            response = ApiClient.accept_order(order_id or 0, courier_id or 0)
-            assert response.status_code == 400
-            assert response.json()["message"] == "Недостаточно данных для поиска"
-        else:
-            response = ApiClient.accept_order(order_id, courier_id)
-            assert response.status_code == 400
-            assert response.json()["message"] == "Недостаточно данных для поиска"
+        response = ApiClient.accept_order(order_id or 0, courier_id or 0)
+        assert response.status_code == 400
+        assert response.json()["message"] == MSG_MISSING_DATA_ACCEPT
